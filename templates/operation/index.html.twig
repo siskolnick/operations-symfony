@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello OperationController!{% endblock %}
+
+{% form_theme operation_form 'bootstrap_4_layout.html.twig' %}
+
+{% block body %}
+
+
+
+    <div class="col-md-12">
+        <div class="card bg-dark my-5">
+            <div class="card-body">
+                <h1 class="card-title text-center text-white py-3">Hello {{ controller_name }}</h1>
+
+                <!-- sum form -->
+                <div class="col-md-4">
+                {{ form(operation_form) }}
+                </div>
+                
+                <h2 class="text-white mt-5">List of previous operations:</h2>
+                <div class="col-md-10">
+                    <ul list-group mt-4>
+                        {% for operation in operations %}
+
+                        {% if operation.typeId == "1" %}
+                            <li class="list-group-item"><!-- typeId=1 -->
+                                <div>
+                                    <label class="mr-3">SUM: </label>
+                                    <i class="mr-3">{{ operation.operator1 }}</i> 
+                                    +
+                                    <i class="ml-3">{{ operation.operator2 }}</i>
+                                    <label class="ml-3">RESULT: </label>
+                                    <i class="ml-2">{{ operation.result }}</i>
+                                </div>  
+                            </li>
+                        {% endif %}
+
+                        {% if operation.typeId == "2" %}
+                        <li class="list-group-item">
+                            <div> <!-- typeId=2 -->
+                                <label class="mr-3">PRODUCT: </label>
+                                <i class="mr-3">{{ operation.operator1 }}</i> 
+                                *
+                                <i class="ml-3">2</i>
+                                <label class="ml-3">RESULT: </label>
+                                <i class="ml-2">{{ operation.result }}</i>
+                            </div>  
+                        </li>
+                        {% endif %}
+
+                        {% if operation.typeId == "3" %}
+                        <li class="list-group-item">
+                            <div><!-- typeId=3 -->
+                                <label class="mr-3">POWER: </label>
+                                <i class="mr-3">{{ operation.operator1 }}</i> 
+                                ^
+                                <i class="ml-3">2</i>
+                                <label class="ml-3">RESULT: </label>
+                                <i class="ml-2">{{ operation.result }}</i>
+                            </div>  
+                        </li>
+                        {% endif %}
+
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>    
+    </div>
+      
+    
+{% endblock %}
