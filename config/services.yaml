@@ -23,3 +23,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    # AQUI SE DEFINEN LOS SERVICIOS PARA PODER SER INYECTADOS DONDE SEA, SIN NECESIDAD DE INSTANCIARLOS
+    # EN CASO DE QUE SE NECESITEN PARAMETROS, AQUI MISMO SE PASAN:
+    # parameters:
+    #   - name: 'bla'
+    #   - type: 'blo'
+    App\Service\OperationService:
+        class:  'App\Service\OperationService'
