@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\OperationResult;
 use App\Repository\OperationResultRepository;
 use App\Entity\OperationSum;
+use App\Service\OperationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,16 +18,15 @@ class OperationController extends AbstractController
     /**
      * @Route("/", name="homepage")
      */
-    public function index(OperationResultRepository $operationsRepo, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(OperationResultRepository $operationsRepo, Request $request, EntityManagerInterface $entityManager, OperationService $operationService): Response
     {
         $operation = new OperationSum();
         $operation->setTypeId(1); // 1 = sum
-        $requestOperation = new OperationRequest();
         $form = $this->createForm(OperationFormType::class, $operation);
         
-        if( $requestOperation->createOperation($form,$entityManager,$operation, $request) ){
+        if( $operationService->createOperation($form,$entityManager,$operation, $request) ){
 
-            return $this->redirectToRoute('view',['id'=>$requestOperation->getIdGenerated()]);
+            return $this->redirectToRoute('view',['id'=>$operationService->getIdGenerated()]);
         }
 
         return $this->render('operation/index.html.twig', [
