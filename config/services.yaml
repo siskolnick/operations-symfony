@@ -28,5 +28,6 @@ services:
     # parameters:
     #   - name: 'bla'
     #   - type: 'blo'
-    App\Service\OperationService:
-        class:  'App\Service\OperationService'
+    App\Service\:
+        #class:  'App\Service\OperationService'
+        resource: '../src/Services/'

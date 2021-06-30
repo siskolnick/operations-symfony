@@ -16,7 +16,7 @@ use Symfony\Flex\Unpack\Operation;
 class OperationController extends AbstractController
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/operations/form", name="homepage")
      */
     public function index(OperationResultRepository $operationsRepo, Request $request, EntityManagerInterface $entityManager, OperationService $operationService): Response
     {
