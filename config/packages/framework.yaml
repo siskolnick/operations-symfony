@@ -16,7 +16,8 @@ framework:
     #fragments: true
     php_errors:
         log: true
-
+    
+    http_client:
 when@test:
     framework:
         test: true

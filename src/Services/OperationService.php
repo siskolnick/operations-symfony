@@ -1,5 +1,5 @@
 <?php
-namespace App\Service;
+namespace App\Services;
 
 use App\Entity\OperationResult;
 use Symfony\Component\HttpFoundation\Request;
