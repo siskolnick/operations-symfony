@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Operations App{% endblock %}
+
+{% block body %}
+    <div class="col-md-12">
+        <div class="card bg-dark my-5">
+            <div class="card-body">
+                <h1 class="card-title text-center text-white py-3"> Operations Symfony App</h1>
+
+                <div class="row mt-5">
+                    <!-- Symfony -->
+                    <div class="col">
+                        <div class="jumbotron text-white">
+                            <h2 class="display-4 text-center">Standalone version</h2>
+                            <p class="lead">Backend is handled all by Symfony (Actions + DB + REST).</p>
+                            <hr class="my-4">
+                            <p>To see it in action click the following link.</p>
+                            <p class="lead text-center">
+                                <a class="btn btn-primary btn-lg" 
+                                href="{{ url('homepage') }}" 
+                                role="button">Go to index Symfony</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Node -->
+                    <div class="col">
+                        <div class="jumbotron text-white">
+                            <h2 class="display-4 text-center">Node version</h2>
+                            <p class="lead">Backend is handled by Node (DB + REST), Frontend still manage by Symfony.</p>
+                            <hr class="my-4">
+                            <p>To see it in action click the following link.</p>
+                            <p class="lead text-center">
+                                <a class="btn btn-primary btn-lg" 
+                                href="{{ url('nodeindex') }}" 
+                                role="button">Go to index Node</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+{% endblock %}
