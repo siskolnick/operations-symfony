@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\OperationFormType;
+use App\Services\TrackingLogService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormError;
 
 class OperationController extends AbstractController
 {
@@ -26,7 +26,6 @@ class OperationController extends AbstractController
         $form = $this->createForm(OperationFormType::class, $operation);
         
         if( $operationService->createOperation($form,$entityManager,$operation, $request) ){
-
             return $this->redirectToRoute('view',['id'=>$operationService->getIdGenerated()]);
         }
 
@@ -48,7 +47,6 @@ class OperationController extends AbstractController
         $form->handleRequest($request);
         
         if( $restClient->createOperation($form) ){
-
             return $this->redirectToRoute('view',['id'=>$restClient->getIdGenerated()]);
         }
 
@@ -81,6 +79,20 @@ class OperationController extends AbstractController
         return $this->render('operation/view.html.twig', [
             'controller_name' => 'REST API Operaciones',
             'operation' => $operation
+        ]);
+    }
+
+    /**
+     * @Route("/api/test", name="test")
+     */
+    public function test(TrackingLogService $log){
+        $operation = new OperationSum();
+        $operation->setTypeId(1); // 1 = sum
+        $operation->setOperator1(1);
+        $operation->setOperator2(1);
+        $log->operationCreated(1,$operation);
+        return $this->render('site/test.html.twig', [
+            'controller_name' => 'REST API Operaciones',
         ]);
     }
 }

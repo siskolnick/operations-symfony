@@ -5,6 +5,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use App\Services\TrackingLogService;
 
 class OperationRESTClientService
 {
@@ -13,11 +14,13 @@ class OperationRESTClientService
     private $client;
     private $params;
     private $id_generated = 0;
+    private $logOperation;
     
-    public function __construct(HttpClientInterface $client, ContainerBagInterface $params)
+    public function __construct(HttpClientInterface $client, ContainerBagInterface $params,TrackingLogService $trackingAlertas )
     {
         $this->client = $client;
         $this->params = $params;
+        $this->logOperation = $trackingAlertas;
     }
 
     public function getOperations(): array
@@ -27,10 +30,7 @@ class OperationRESTClientService
             $this->params->get('app.REST_Endpoint')
         );
 
-        $statusCode = $response->getStatusCode();
-        $contentType = $response->getHeaders()['content-type'][0];
         $content = json_decode($response->getContent());
-        //$content  = $response->toArray();
         return $content->data;
     }
 
@@ -51,9 +51,7 @@ class OperationRESTClientService
             );
 
             $statusCode = $response->getStatusCode();
-            // $contentType = $response->getHeaders()['content-type'][0];
-            //$content = $response->toArray();
-            if( $statusCode == self::HTTP_STATUS_OK) //ok
+            if( $statusCode == self::HTTP_STATUS_OK) //200-ok
             {
                 $content = json_decode($response->getContent());
                 $this->id_generated = $content->id != null? $content->id : 0;
@@ -61,6 +59,8 @@ class OperationRESTClientService
                     $form->addError(new FormError('Can\'t recover id of created operation (Node REST)'));    
                     return false;
                 }
+                
+                $this->logOperation->operationCreated($this->id_generated,$operation);
                 return true;
             }else{
                 $form->addError(new FormError('Error calling operation service (Node REST)'));
