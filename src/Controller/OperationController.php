@@ -6,6 +6,7 @@ use App\Repository\OperationResultRepository;
 use App\Entity\OperationSum;
 use App\Services\OperationService;
 use App\Services\OperationRESTClientService;
+use App\Services\MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,12 +86,14 @@ class OperationController extends AbstractController
     /**
      * @Route("/api/test", name="test")
      */
-    public function test(TrackingLogService $log){
+    public function test(TrackingLogService $log, MailService $ms){
+        
         $operation = new OperationSum();
         $operation->setTypeId(1); // 1 = sum
         $operation->setOperator1(1);
         $operation->setOperator2(1);
         $log->operationCreated(1,$operation);
+       
         return $this->render('site/test.html.twig', [
             'controller_name' => 'REST API Operaciones',
         ]);
