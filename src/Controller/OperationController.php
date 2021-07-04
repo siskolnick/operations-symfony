@@ -4,19 +4,21 @@ namespace App\Controller;
 
 use App\Repository\OperationResultRepository;
 use App\Entity\OperationSum;
-use App\Service\OperationService;
+use App\Services\OperationService;
+use App\Services\OperationRESTClientService;
+use App\Services\MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\OperationFormType;
+use App\Services\TrackingLogService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Flex\Unpack\Operation;
 
 class OperationController extends AbstractController
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/operations/index", name="homepage")
      */
     public function index(OperationResultRepository $operationsRepo, Request $request, EntityManagerInterface $entityManager, OperationService $operationService): Response
     {
@@ -25,7 +27,6 @@ class OperationController extends AbstractController
         $form = $this->createForm(OperationFormType::class, $operation);
         
         if( $operationService->createOperation($form,$entityManager,$operation, $request) ){
-
             return $this->redirectToRoute('view',['id'=>$operationService->getIdGenerated()]);
         }
 
@@ -37,11 +38,35 @@ class OperationController extends AbstractController
     }
 
     /**
+     * @Route("/operations/node/index", name="nodeindex")
+     */
+    public function nodeIndex(OperationRESTClientService $restClient, Request $request): Response
+    {
+        $operation = new OperationSum();
+        $operation->setTypeId(1); // 1 = sum
+        $form = $this->createForm(OperationFormType::class, $operation);
+        $form->handleRequest($request);
+        
+        if( $restClient->createOperation($form) ){
+            return $this->redirectToRoute('view',['id'=>$restClient->getIdGenerated()]);
+        }
+
+        //dd($restClient->getOperations());
+        return $this->render('operation/index.html.twig', [
+            'controller_name' => 'REST API Operaciones',
+            'operation_form' => $form->createView(),
+            'operations' => $restClient->getOperations(),
+        ]);
+    }
+
+    /**
      * @Route("/api/operations", name="operations")
      */
     public function operations(OperationResultRepository $operationsRepo): Response
     {
-        return $this->json($operationsRepo->findAll());
+        $data = $this->get('serializer')->serialize($operationsRepo->findAll(), 'json');
+
+        return new Response($data);
 
     }
 
@@ -55,6 +80,22 @@ class OperationController extends AbstractController
         return $this->render('operation/view.html.twig', [
             'controller_name' => 'REST API Operaciones',
             'operation' => $operation
+        ]);
+    }
+
+    /**
+     * @Route("/api/test", name="test")
+     */
+    public function test(TrackingLogService $log, MailService $ms){
+        
+        $operation = new OperationSum();
+        $operation->setTypeId(1); // 1 = sum
+        $operation->setOperator1(1);
+        $operation->setOperator2(1);
+        $log->operationCreated(1,$operation);
+       
+        return $this->render('site/test.html.twig', [
+            'controller_name' => 'REST API Operaciones',
         ]);
     }
 }

@@ -91,4 +91,22 @@ abstract class OperationResult
         $this->type_id = $type;
         return $this;
     }
+
+    public function __toString()
+    {
+        try 
+        {
+            return json_encode([
+                'id'=>$this->id,
+                'operator1'=>$this->operator1,
+                'operator2'=>$this->operator2,
+                'typeId'=>$this->typeId,
+                'result'=>$this->result,
+            ]);
+        } 
+        catch (Exception $exception) 
+        {
+            return '';
+        }
+    }
 }

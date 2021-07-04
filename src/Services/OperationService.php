@@ -1,14 +1,22 @@
 <?php
-namespace App\Service;
+namespace App\Services;
 
 use App\Entity\OperationResult;
+use App\Services\TrackingLogService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class OperationService
 {
-    protected $id_generated = 0;
+    private $id_generated = 0;
+    private $logOperation;
+    
+    public function __construct(TrackingLogService $trackingAlertas)
+    {
+        $this->logOperation = $trackingAlertas;
+    }
+
     public function createOperation(FormInterface $form, EntityManagerInterface $entityManager,
       OperationResult $operation, Request $request): bool
     {
@@ -17,6 +25,7 @@ class OperationService
             $entityManager->persist($operation);
             $entityManager->flush();
             $this->id_generated = $operation->getId();
+            $this->logOperation->operationCreated($this->id_generated,$operation);
             return true;
         }
         return false;
